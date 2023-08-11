@@ -1,0 +1,39 @@
+//Get Movies
+GET http://localhost:5000/movies
+
+###
+//Login
+POST http://localhost:5000/login
+Content-Type: application/json
+
+{
+  "username":"test",
+  "password":"123"
+}
+
+###
+
+//Register
+POST http://localhost:5000/register
+Content-Type: application/json
+
+{
+
+  "name":"Apriana",
+  "age":"18",
+  "username":"test2",
+  "password":"1234",
+  "confPassword":"1234"
+}
+
+###
+
+GET http://localhost:5000/users
+
+###
+//Get Me
+GET http://localhost:5000/me
+
+###
+//Log Out
+DELETE  http://localhost:5000/logout
