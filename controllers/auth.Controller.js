@@ -3,7 +3,7 @@ const argon = require('argon2');
 const jwt = require('jsonwebtoken');  
 module.exports = {
   register: async (req, res) => {
-    const { name, age, username, password } = req.body;
+    const { name, age, username, password, role } = req.body;
     if (!name || !age || !username || !password) {
       return res.status(400).json({ message: 'All fields are required' });
     }
@@ -17,6 +17,7 @@ module.exports = {
       age: age,
       username: username,
       password: hashPassword,
+      role: role
     });
     try {
       await user.save();
@@ -39,7 +40,7 @@ module.exports = {
         username: user.username,
         role: user.role
       }
-    }, process.env.JWT_SECRET,{expiresIn: '1m'});
+    }, process.env.JWT_SECRET,{expiresIn: '1h'});
     res.status(200).json({ message: 'Login successful', accessToken: accessToken });
   },
   me: async (req, res) => {
