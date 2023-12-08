@@ -40,5 +40,5 @@ app.use(routes)
 
 
 app.listen(process.env.APP_PORT, ()=> {
-    console.log('Server up and running...');
+    console.log('Server up and running port', process.env.APP_PORT);
 });

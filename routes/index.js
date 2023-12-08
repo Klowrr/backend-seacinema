@@ -1,8 +1,7 @@
-// import authRouter from "./AuthRoute.js";
-const moviesRouter = require("./MoviesRoute.js");
-
+const MoviesRouter = require("./movieRouter.js");
+const UsersRouter = require("./userRouter.js");
 const routes = [
-    // authRouter,
-    moviesRouter,
+    MoviesRouter,
+    UsersRouter
 ];
 module.exports = routes;
