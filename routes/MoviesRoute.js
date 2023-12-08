@@ -1,18 +1,17 @@
-import express from "express";
-import {
+const express =  require("express");
+const {
     getMovies,
     getMovieById,
     createMovie,
     updateMovie,
     deleteMovie
-} from "../controllers/Movies.js";
-import { verifyUser, adminOnly } from "../middleware/AuthUser.js";
+} =  require("../controllers/Movies.js");
 
 const router = express.Router();
 router.get('/movies',getMovies);
 router.get('/movies/:id',getMovieById);
-router.post('/movies',verifyUser,adminOnly,createMovie);
-router.patch('/movies/:id',verifyUser,adminOnly ,updateMovie);
-router.delete('/movies/:id',verifyUser,adminOnly ,deleteMovie);
+router.post('/movies',createMovie);
+router.patch('/movies/:id',updateMovie);
+router.delete('/movies/:id',deleteMovie);
 
-export default router;
+module.exports = router;
