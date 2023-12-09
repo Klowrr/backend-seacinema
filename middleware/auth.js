@@ -5,7 +5,7 @@ module.exports = async (req, res, next) => {
   if (!token) return res.status(401).json({ message: 'Unauthorized' });
   try {
     const decode = jwt.verify(token.split('Bearer ')[1], process.env.JWT_SECRET);
-    req.user = decode.user;
+    res.user = decode.user;
     next();
   } catch (error) {
     return res.status(401).json({ message: error.message });

@@ -1,6 +1,5 @@
 const express = require("express");
 const mongoose = require("mongoose");
-const cors = require("cors");
 const session = require("express-session");
 const dotenv = require("dotenv");
 const routes = require("./routes/index.js");

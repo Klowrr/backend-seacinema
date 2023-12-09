@@ -10,7 +10,13 @@ module.exports = {
         }
     },
     getMovieById: async(req, res) =>{
-        res.json(res.movie);
+        try {
+            const movie = await Movies.findById(req.params.id);
+            if(!movie) return res.status(404).json({message: "Movie not found"});
+            res.status(200).json(movie);
+        } catch (error) {
+            res.status(500).json({message: error.message});
+        }
     },
     createMovie: async(req, res) =>{
         const { title ,description, release_date, rating, age_rating, poster, price} = req.body;
@@ -32,16 +38,17 @@ module.exports = {
     },
     updateMovie: async(req, res) =>{
         const { title ,description, release_date, rating, age_rating, poster, price} = req.body;
-
-        res.movie.title = title || res.movie.title;
-        res.movie.description = description || res.movie.description;
-        res.movie.release_date = release_date || res.movie.release_date;
-        res.movie.rating = rating || res.movie.rating;
-        res.movie.age_rating = age_rating || res.movie.age_rating;
-        res.movie.poster = poster || res.movie.poster;
-        res.movie.price = price || res.movie.price;
+        const movie = await Movies.findById(req.params.id);
+        if (!movie) return res.status(404).json({message: "Movie not found"});
+        movie.title = title || movie.title;
+        movie.description = description || movie.description;
+        movie.release_date = release_date || movie.release_date;
+        movie.rating = rating || movie.rating;
+        movie.age_rating = age_rating || movie.age_rating;
+        movie.poster = poster || movie.poster;
+        movie.price = price || movie.price;
         try {
-            await res.movie.save();
+            const updateMovie = await movie.save();
             res.status(200).json({message: "Movie updated successfuly"});
         } catch (error) {
             res.status(500).json({message: error.message});
@@ -49,7 +56,8 @@ module.exports = {
     },
     deleteMovie: async(req, res) =>{
         try {
-            await res.movie.deleteOne();
+            const movie = Movies.findById(req.body.movie_id);
+            await movie.deleteOne();
             res.status(200).json({message: "Deleted Movie"});
         } catch (error) {
             res.status(500).json({message: error.message});
