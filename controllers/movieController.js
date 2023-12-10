@@ -19,14 +19,14 @@ module.exports = {
         }
     },
     createMovie: async(req, res) =>{
-        const { title ,description, release_date, rating, age_rating, poster, price} = req.body;
+        const { title ,description, release_date, rating, age_rating, price} = req.body;
         const movie = new Movies({
             title: title,
             description:description,
             release_date:release_date,
             rating:rating,
             age_rating:age_rating,
-            poster:poster,
+            poster:req.file.path,
             price: price,
         });
         try {
