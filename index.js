@@ -3,10 +3,11 @@ const dotenv = require("dotenv").config();
 const routes = require("./routes/index.js");
 const db = require("./config/database/dbconfig.js");
 const app = express();
-// app.use(cors({
-//     credentials: true,
-//     origin: 'http://localhost:3000'
-// }));
+const cors = require('cors');
+app.use(cors({
+    credentials: true,
+    origin: 'http://localhost:3000'
+}));
 app.use('/uploads',express.static('uploads'));
 db()
 app.use(express.json());

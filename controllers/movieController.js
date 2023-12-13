@@ -1,5 +1,5 @@
 const Movies = require("../models/movieModel.js");
-
+const cloudinary = require("../utils/cloudinary.js");
 module.exports = { 
     getMovies: async (req, res) =>{
         try {
@@ -20,21 +20,24 @@ module.exports = {
     },
     createMovie: async(req, res) =>{
         const { title ,description, release_date, rating, age_rating, price} = req.body;
-        const movie = new Movies({
-            title: title,
-            description:description,
-            release_date:release_date,
-            rating:rating,
-            age_rating:age_rating,
-            poster:req.file.path,
-            price: price,
-        });
-        try {
-            const newMovie = await movie.save();
-            res.status(201).json({message: "Movie Created Successfuly"});
-        } catch (error) {
-            res.status(400).json({message: error.message});
-        }
+        cloudinary.uploader.upload(req.file.path,{ folder: "seacinema" }, async(err, result) => {
+            if (err) return res.status(500).json({message: err.message});
+            const movie = new Movies({
+                title: title,
+                description:description,
+                release_date:release_date,
+                rating:rating,
+                age_rating:age_rating,
+                poster:result.secure_url,
+                price: price,
+            });
+            try {
+                const newMovie = await movie.save();
+                res.status(201).json({message: "Movie Created Successfuly"});
+            } catch (error) {
+                res.status(400).json({message: error.message});
+            }
+        })
     },
     updateMovie: async(req, res) =>{
         const { title ,description, release_date, rating, age_rating, poster, price} = req.body;

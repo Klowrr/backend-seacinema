@@ -4,9 +4,8 @@ const Movie = require('../models/movieModel');
 module.exports = {
   getAllShowTimes: async (req, res) => {
     try {
-      const response = await ShowTime.find();
-      console.log(response);
-      res.status(200).json(response);
+      const showtime = await ShowTime.find();
+      res.status(200).json(showtime);
     } catch (error) {
       res.status(500).json({msg: error.message});
     }
@@ -44,11 +43,13 @@ module.exports = {
     }
   },
   updateShowTime: async (req, res) => {
-    const { date } = req.body;
-    res.showTime.date = date || res.showTime.date;
-    res.showTime.time = time || res.showTime.time;
+    const { movie_id, date } = req.body;
+    const showTime = await ShowTime.findById(req.params.id);
+    if (!showTime) return res.status(404).json({msg: "Data not found"});
+    showTime.movie_id = movie_id || showTime.movie_id;
+    showTime.date = date || showTime.date;
     try {
-      await res.showTime.save();
+      await showTime.save();
       res.status(200).json({message: "Showtime updated successfuly"});
     } catch (error) {
       res.status(500).json({message: error.message});
@@ -56,7 +57,8 @@ module.exports = {
   },
   deleteShowTime: async (req, res) => {
     try {
-      await res.showTime.deleteOne();
+      const showtime = await ShowTime.findById(req.params.id);
+      await showTime.deleteOne();
       res.status(200).json({message: "Showtime deleted successfuly"});
     } catch (error) {
       res.status(500).json({message: error.message});

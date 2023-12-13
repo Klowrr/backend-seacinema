@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
-
+const MovieModel = require('./movieModel.js');
+const ShowTimeModel = require('./showtimeModel.js');
 const transactionSchema = new mongoose.Schema({
   user_id:{
     type:mongoose.Schema.Types.ObjectId,
@@ -11,30 +12,7 @@ const transactionSchema = new mongoose.Schema({
     required: true
   },
   ticket:{
-    ticket_code:{
-      type: String,
-      required: function () {
-        return this.type === 'buy';
-      },
-    },
-    movie_id:{
-      type:mongoose.Schema.Types.ObjectId,
-      required: function () {
-        return this.type === 'buy';
-      },
-    },
-    show_time_id:{
-      type:mongoose.Schema.Types.ObjectId,
-      required: function () {
-        return this.type === 'buy';
-      },
-    },
-    booking_seat:{
-      type: Array,
-      required: function () {
-        return this.type === 'buy';
-      },
-    },
+    type:mongoose.Schema.Types.ObjectId,
   },
   total:{
     type: Number,

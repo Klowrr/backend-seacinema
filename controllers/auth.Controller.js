@@ -29,20 +29,25 @@ module.exports = {
   login: async (req, res) => {
     const { username, password } = req.body;
     if ( !username || !password ) return res.status(400).json({ message: 'All fields are required' });
-    const user = await User.findOne({ username: username });
-    const validPassword = await argon.verify(user.password, password);
-    if (!user || !validPassword) return res.status(400).json({ message: 'Invalid Username or password' });
-    const accessToken = jwt.sign({ 
-      user:{
-        id: user._id,
-        role: user.role
-      }
-    }, process.env.JWT_SECRET,{expiresIn: '1h'});
-    res.status(200).json({ message: 'Login successful',user:user ,accessToken: accessToken });
+    try {
+      const user = await User.findOne({ username: username });
+      if (!user) return res.status(400).json({ message: 'Invalid Username or password' });
+      const validPassword = await argon.verify(user.password, password);
+      if (!validPassword) return res.status(400).json({ message: 'Invalid Username or password' });
+      const accessToken = jwt.sign({ 
+        user:{
+          id: user._id,
+          role: user.role
+        }
+      }, process.env.JWT_SECRET,{expiresIn: '1h'});
+      res.status(200).json({ message: 'Login successful',user:user ,accessToken: accessToken });
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
   },
   me: async (req, res) => {
     try {
-      const user = await User.findById(res.user.id);
+      const user = await User.findById(res.user.id,{ password: 0 , __v: 0, createdAt: 0, updatedAt: 0});
       if (!user) return res.status(404).json({ message: 'User not found' });
       res.status(200).json(user);
     } catch (error) {

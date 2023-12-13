@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-
+const Showtime = require("./showtimeModel.js");
 const movieSchema = new mongoose.Schema({
     title:{
       type: String,
@@ -40,3 +40,12 @@ const movieSchema = new mongoose.Schema({
 })
 
 module.exports = mongoose.model("movies", movieSchema);
+
+movieSchema.pre("remove", async function (next) {
+  try {
+    await Showtime.remove({ movie_id: this._id });
+    next();
+  } catch (error) {
+    next(error);
+  }
+})
