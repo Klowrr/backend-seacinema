@@ -11,6 +11,9 @@ const transactionSchema = new mongoose.Schema({
     enum: ['buy', 'topup','withdraw'],
     required: true
   },
+  movie_title:{
+    type: String,
+  },
   ticket:{
     type:mongoose.Schema.Types.ObjectId,
   },

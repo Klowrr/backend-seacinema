@@ -25,7 +25,7 @@ module.exports = {
   },
   getTransactionByUserId: async (req, res) => {
     try {
-      const transaction = await Transaction.find({user_id: res.user.id});
+      const transaction = await Transaction.find({user_id: res.user.id}).sort({'_id': -1});
       if (!transaction) return res.status(404).json({msg: "Data not found"});
       res.status(200).json(transaction);
     } catch (error) {
@@ -47,10 +47,10 @@ module.exports = {
     const transaction = new Transaction({
       user_id: user._id,
       type: 'buy',
+      movie_title: movie.title,
       total: totalCost,
       status: status,
     });
-   
     const ticket = new Ticket({
       transaction_id: transaction._id,
       user_id: user._id,
@@ -82,9 +82,10 @@ module.exports = {
   createTransactionTopUp: async (req, res) => {
     try {
       const { total } = req.body;
+      parseInt(total)
       const user = await User.findById(res.user.id);
-      if (total < 0) return res.status(400).json({message: "Invalid amount"})
-      user.balance += parseInt(total);
+      if (total <= 0) return res.status(400).json({message: "Invalid amount"})
+      user.balance += total;
       const transaction = new Transaction({
         user_id: user._id,
         type: 'topup',
@@ -101,6 +102,7 @@ module.exports = {
     try {
       const { total } = req.body;
       const user = await User.findById(res.user.id);
+      if (total <= 0) return res.status(400).json({message: "Invalid amount"})
       if (total > user.balance) return res.status(400).json({message: "Insufficient balance"});
       user.balance -= parseInt(total);
       const transaction = new Transaction({

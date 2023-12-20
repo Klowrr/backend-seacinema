@@ -40,7 +40,13 @@ module.exports = {
           role: user.role
         }
       }, process.env.JWT_SECRET,{expiresIn: '1h'});
-      res.status(200).json({ message: 'Login successful',user:user ,accessToken: accessToken });
+      res.status(200).json({ message: 'Login successful',user:{
+        id: user._id,
+        name: user.name,
+        age: user.age,
+        username: user.username,
+        role: user.role
+      } ,accessToken: accessToken });
     } catch (error) {
       res.status(500).json({ message: error.message });
     }
