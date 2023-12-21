@@ -1,5 +1,7 @@
 const Movies = require("../models/movieModel.js");
 const cloudinary = require("../utils/cloudinary.js");
+const streamifier = require('streamifier');
+const sharp = require('sharp');
 module.exports = { 
     getMovies: async (req, res) =>{
         try {
@@ -20,24 +22,31 @@ module.exports = {
     },
     createMovie: async(req, res) =>{
         const { title ,description, release_date, rating, age_rating, price} = req.body;
-        cloudinary.uploader.upload(req.file.path,{ folder: "seacinema" }, async(err, result) => {
-            if (err) return res.status(500).json({message: err.message});
-            const movie = new Movies({
-                title: title,
-                description:description,
-                release_date:release_date,
-                rating:rating,
-                age_rating:age_rating,
-                poster:result.secure_url,
-                price: price,
-            });
-            try {
-                const newMovie = await movie.save();
-                res.status(201).json({message: "Movie Created Successfuly"});
-            } catch (error) {
-                res.status(400).json({message: error.message});
+        const stream = await cloudinary.uploader.upload_stream({ folder: "seacinema" }, async (err, result) => {
+                if (err) return res.status(500).json({message: err.message});
+                const movie = new Movies({
+                    title: title,
+                    description:description,
+                    release_date:release_date,
+                    rating:rating,
+                    age_rating:age_rating,
+                    poster:result.secure_url,
+                    price: price,
+                });
+                try {
+                    await movie.save();
+                    res.status(201).json({message: "Movie Created Successfuly"});
+                } catch (error) {
+                    res.status(400).json({message: error.message});
+                }
             }
-        })
+        )
+        if(req.file.size > 1000000){ // if 1mb compress to 40% quality
+            const resizefile = await sharp(req.file.buffer).jpeg({quality: 40}).toBuffer();
+            streamifier.createReadStream(resizefile).pipe(stream);
+        }else{
+            streamifier.createReadStream(req.file.buffer).pipe(stream);
+        }
     },
     updateMovie: async(req, res) =>{
         const { title ,description, release_date, rating, age_rating, poster, price} = req.body;
