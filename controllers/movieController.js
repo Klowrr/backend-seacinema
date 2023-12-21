@@ -40,6 +40,7 @@ module.exports = {
                 }
             }
         )
+        if (req.file.size > 1000000) return res.status(400).json({message: "File size too large"});
         streamifier.createReadStream(req.file.buffer).pipe(stream);
     },
     updateMovie: async(req, res) =>{
