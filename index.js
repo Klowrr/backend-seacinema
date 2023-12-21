@@ -6,7 +6,7 @@ const app = express();
 const cors = require('cors');
 app.use(cors({
     credentials: true,
-    origin: ['https://seacinema-876cf.web.app']
+    origin: ['https://seacinema-876cf.web.app','http://localhost:3000']
 }));
 app.use('/uploads',express.static('uploads'));
 db()
