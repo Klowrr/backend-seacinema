@@ -1,7 +1,6 @@
 const Movies = require("../models/movieModel.js");
 const cloudinary = require("../utils/cloudinary.js");
 const streamifier = require('streamifier');
-const sharp = require('sharp');
 module.exports = { 
     getMovies: async (req, res) =>{
         try {
@@ -41,12 +40,7 @@ module.exports = {
                 }
             }
         )
-        if(req.file.size > 1000000){ // if 1mb compress to 40% quality
-            const resizefile = await sharp(req.file.buffer).jpeg({quality: 40}).toBuffer();
-            streamifier.createReadStream(resizefile).pipe(stream);
-        }else{
-            streamifier.createReadStream(req.file.buffer).pipe(stream);
-        }
+        streamifier.createReadStream(req.file.buffer).pipe(stream);
     },
     updateMovie: async(req, res) =>{
         const { title ,description, release_date, rating, age_rating, poster, price} = req.body;
